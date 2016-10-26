@@ -57,4 +57,50 @@
   };
 
   // ADD YOUR CODE HERE
+
+  function getMovie(filmInput) {
+    movies = [];
+    var filmString = 'http://www.omdbapi.com/?s=' + filmInput;
+    var $xhr = $.getJSON(filmString);
+
+    $xhr.done(function(data) {
+      if ($xhr.status !== 200) {
+        return;
+      }
+
+      console.log(data);
+      console.log(data.Search[0].imdbID);
+      console.log(data.Search[0].Poster);
+      console.log(data.Search[0].Title);
+      console.log(data.Search[0].Year);
+
+      for (var i = 0; i < data.Search.length; i++) {
+        movies[i] = {};
+        movies[i].id = data.Search[i].imdbID;
+        movies[i].poster = data.Search[i].Poster;
+        movies[i].title = data.Search[i].Title;
+        movies[i].year = data.Search[i].Year;
+        renderMovies();
+      }
+    });
+
+    $xhr.fail(function(data) {
+      console.log('Query failed!');
+    });
+  }
+
+  $('#submitButton').on('click', function(event) {
+    var filmInput = $('#search').val();
+
+    console.log(filmInput);
+
+    if ((filmInput === 'Enter movie title e.g. Jumanji') || (filmInput === '')) {
+      alert('Please enter a valid search.');
+    } else {
+      event.preventDefault();
+      console.log('got movie');
+      getMovie(filmInput);
+    }
+
+  });
 })();
