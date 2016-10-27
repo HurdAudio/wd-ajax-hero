@@ -57,11 +57,29 @@
   };
 
   // ADD YOUR CODE HERE
+  function getPlot(index, filmTitle) {
+    var returnString = '';
+    var plotString = 'http://www.omdbapi.com/?t=' + filmTitle;
+    var $xhr = $.getJSON(plotString);
+
+    $xhr.done(function(data) {
+      if ($xhr.status !== 200) {
+        return;
+      }
+      //alert (data.Plot);
+      returnString = data.Plot;
+      movies[index].plot = returnString;
+      // alert(movies[index].plot);
+      renderMovies();
+
+    });
+  }
 
   function getMovie(filmInput) {
     movies = [];
     var filmString = 'http://www.omdbapi.com/?s=' + filmInput;
     var $xhr = $.getJSON(filmString);
+    var plot = '';
 
     $xhr.done(function(data) {
       if ($xhr.status !== 200) {
@@ -76,12 +94,15 @@
 
       for (var i = 0; i < data.Search.length; i++) {
         movies[i] = {};
+        plot = getPlot(i, data.Search[i].Title);
         movies[i].id = data.Search[i].imdbID;
         movies[i].poster = data.Search[i].Poster;
         movies[i].title = data.Search[i].Title;
         movies[i].year = data.Search[i].Year;
-        renderMovies();
+
+        // renderMovies();
       }
+      // renderMovies();
     });
 
     $xhr.fail(function(data) {
@@ -100,6 +121,7 @@
       event.preventDefault();
       console.log('got movie');
       getMovie(filmInput);
+      $('#search').val('');
     }
 
   });
